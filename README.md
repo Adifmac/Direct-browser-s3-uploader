@@ -57,83 +57,65 @@ fileInput.addEventListener('change', (event) => {
 
 ## Options
 
-Using pre-signed form inputs - for example: [eddturtle/direct-upload](https://github.com/eddturtle/direct-upload)
+Using pre-signed form inputs (for example using: [eddturtle/direct-upload](https://github.com/eddturtle/direct-upload)):
 
-| Option              | Default     | required  | Description  |
-| ------------------- | ----------- |---------- |------------- |
-| addS3inputs         | n/a         | No        | use aws signature inputs.   |
-| credentialsEndPoint | n/a         | Yes       | URL of aws signature provider. |
-| maxWidth            | 4000        | No        | Max image width, above this the image will be resized. |
-| maxHeight           | 4000        | No        | Max image height, above this the image will be resized. |
-| maxPicFileSize      | 6999000.    | No        |  Max image file size. |
-| maxVidFileSize      | 9999000     | No        |  Max video file size. |
+| Option              | Default     | Type      | required  | Description  |
+| ------------------- | ----------- |---------- |---------- |------------- |
+| addS3inputs         | n/a         | Boolean   | No        | use aws signature inputs.   |
+| credentialsEndPoint | n/a         | String    | Yes       | URL of aws signature provider. |
+| maxWidth            | 4000        | Int       | No        | Max image width, above this the image will be resized. |
+| maxHeight           | 4000        | Int       | No        | Max image height, above this the image will be resized. |
+| maxPicFileSize      | 6999000.    | Int       | No        |  Max image file size. |
+| maxVidFileSize      | 9999000     | Int       | No        |  Max video file size. |
+| directory           | n/a         | String    | No        |  directory (prefix) to prepend to the file name. |
 
-Alternatively
+Alternatively:
 
-| Option              | Default     | required  | Description  |
-| ------------------- | ----------- |---------- |------------- |
-| uploadUrl           | n/a         | Yes       | URL of upload destination server.   |
-| prefix              | n/a         | No        | directory to add to the file name.  |
+| Option              | Default     | Type      | required  | Description  |
+| ------------------- | ----------- |---------- |---------- |------------- |
+| uploadUrl           | n/a         | String    | Yes       | URL of upload destination server.   |
+| prefix              | n/a         | String    | No        | directory (prefix) to prepend to the file name.  |
 
 
 
 
 ## Events:
 
-`upload_start` fired once before pre-process starts
-```
-<int> number of files to processed
-```
+1. `upload_start` - fired once before pre-process starts.
+	- `event` (int) number of files to processed
 
-`skip-file` fired once per rejected file
-```
-{
-	message <string> 
-	size <int> file size in bytes
-	name <string> file name
-}
-  ```
 
-`pre-process` progress of pre-processing
-```
-{
-	file <object>
-	processed <int> already processed
-	total <int> total files to process
-}
-```
+2. `skip-file` - fired once per rejected file.
+	- `event.message` (string) 
+	- `event.size` (int) file size in bytes
+	- `event.name` (string) file name
 
-`completion` fired once per successfully uploaded file
-```
-{
-	<object> the file that was successfully uploaded
-}
-```
+3. `pre-process` - fired once per file, progress of pre-processing.
+	- `event.file` (object)
+	- `event.processed` (int) already processed
+	- `event.total` (int) total files to process
 
-`total-progress` progresss of uploading files. This progress is combined for all uploading files.
-```
-{
-	progress <int> file size based percentage uploaded
-	totalFiles <int> number of files to be processed and uploaded
-	uploaded <int> number of files already uploaded
-}
-```
+4. `completion` - fired once per successfully uploaded file.
+	- `event` (object) the file that was successfully uploaded
 
-`upload-done` fired once after all files were processed and uploaded. Provides all info to present the user a summary of the upload, including failed uploads and skipped files.
-```
-{
-	uploaded <int> number of files that were successfully uploaded
-	totalSize <int> total bytes uploaded (all uploaded files)
-	uploadedFiles <array> array of file-objects {metadata, location, size}
-	skipped <array> array of file-objects {message, name, size}
-	failed <array> array of file-objects {message, name, size}
-}
-```
 
-`error` fired for any error in the process
-```
-<mixed> xhr.response || tags processing error || fileReader error
-```
+5. `total-progress` - progresss of uploading files. This progress is combined for all uploading files.
+	- `event.progress` (int) file size based percentage uploaded
+	- `event.totalFiles` (int) number of files to be processed and uploaded
+	- `event.uploaded` (int) number of files already uploaded
+
+
+6. `upload-done` - fired once after all files were processed and uploaded. Provides all info to present the user a summary of the upload, including failed uploads and skipped files.
+	- `event.uploaded` (int) number of files that were successfully uploaded
+	- `event.totalSize` (int) total bytes uploaded (all uploaded files)
+	- `event.uploadedFiles` (array) array of objects: {metadata, location, size}
+	- `event.skipped` (array) array of objects: {message, name, size}
+	- `event.failed` (array) array of objects: {message, name, size}
+
+
+7. `error` - fired for any error in the process.
+	- `event` (mixed) xhr.response || tags processing error || fileReader error
+
 
 
 
