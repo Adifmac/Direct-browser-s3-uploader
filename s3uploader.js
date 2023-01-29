@@ -28,14 +28,7 @@ class S3Uploader {
             if (!this.options.credentialsEndPoint) throw new Error('Missing credential endpoint');
             try {
                 let loaded = await this._getFormInputs();
-                this.options.formInputs = {};
-                this.options.formInputs.policy = loaded.inputsValues.policy;
-                this.options.formInputs.credential = loaded.inputsValues['X-amz-credential'];
-                this.options.formInputs.algorithm = loaded.inputsValues['X-amz-algorithm'];
-                this.options.formInputs.x_amz_date = loaded.inputsValues['X-amz-date'];
-                this.options.formInputs.signature = loaded.inputsValues['X-amz-signature'];
-                this.options.formInputs.expires = loaded.inputsValues['Expires'];
-                this.options.formInputs.cacheControl = loaded.inputsValues['CacheControl'];
+                this.options.formInputs = loaded.inputsValues;
                 this.options.formInputs.url = decodeURIComponent(loaded.formUrl);
                 this.options.formInputs.tenantDir = loaded.directory;
                 this.options.directory = [loaded.directory];
@@ -166,12 +159,12 @@ class S3Uploader {
             formData.append('success_action_status', 201);
             if (this.options.addS3inputs) {
                 formData.append('policy', this.options.formInputs.policy);
-                formData.append('X-amz-credential', this.options.formInputs.credential);
-                formData.append('X-amz-algorithm', this.options.formInputs.algorithm);
-                formData.append('X-amz-date', this.options.formInputs.x_amz_date);
-                formData.append('X-amz-signature', this.options.formInputs.signature);
-                formData.append('Expires', this.options.formInputs.expires);
-                formData.append('CacheControl', this.options.formInputs.cacheControl);
+                formData.append('X-amz-credential', this.options.formInputs['X-amz-credential']);
+                formData.append('X-amz-algorithm', this.options.formInputs['X-amz-algorithm']);
+                formData.append('X-amz-date', this.options.formInputs['X-amz-date']);
+                formData.append('X-amz-signature', this.options.formInputs['X-amz-signature']);
+                formData.append('Expires', this.options.formInputs['Expires']);
+                formData.append('CacheControl', this.options.formInputs['CacheControl']);
             }
             formData.append('file', fileObj.fixed_file);
 
@@ -402,7 +395,6 @@ class S3Uploader {
             reader.onerror = function (error) {
                 reject({ status: 'fail', message: error });
             };
-            //reader.readAsDataURL(file);
             reader.readAsArrayBuffer(file);
         });
     }
